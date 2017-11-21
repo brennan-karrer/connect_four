@@ -19,12 +19,23 @@ defmodule ConnectFour.Board do
   end
 
   def place_token(player, column) do
-    first_empty(column)
-    |> agent_name(column)
-    |> Process.whereis
-    |> Agent.update(fn _state -> player end)
+    if is_full?(column) do
+      :column_full
+    else
+      first_empty(column)
+      |> agent_name(column)
+      |> Process.whereis
+      |> Agent.update(fn _state -> player end)
+  
+      :move_accepted
+    end
+  end
 
-    :move_accepted
+  def is_full?(column) do
+    agent_name(@last_row, column)
+    |> Process.whereis
+    |> Agent.get(&(&1))
+    |> (&(&1 != Empty)).()
   end
 
   def first_empty(column) do
