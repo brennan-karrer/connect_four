@@ -6,10 +6,10 @@ defmodule ConnectFour.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
+    import Supervisor.Spec, warn: false
+
     children = [
-      # Starts a worker by calling: ConnectFour.Worker.start_link(arg)
-      # {ConnectFour.Worker, arg},
+      worker(ConnectFour.Game, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
