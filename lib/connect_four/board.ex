@@ -19,7 +19,35 @@ defmodule ConnectFour.Board do
   end
 
   def place_token(player, column) do
+    first_empty(column)
+    |> agent_name(column)
+    |> Process.whereis
+    |> Agent.update(fn _state -> player end)
+
     :move_accepted
+  end
+
+  def first_empty(column) do
+    first_empty(1, column)
+  end
+
+  def first_empty(row, column) do
+    if empty_space?(row, column) do
+      row
+    else
+      first_empty(row + 1, column)
+    end
+  end
+
+  def empty_space?(row, column) do
+    agent_name(row, column)
+    |> Process.whereis
+    |> Agent.get(&(&1))
+    |> is_empty?
+  end
+
+  def is_empty?(val) do
+    val == Empty
   end
 
   def spaces do
