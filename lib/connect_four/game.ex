@@ -3,7 +3,11 @@ defmodule ConnectFour.Game do
 
   @registered_name ConnectFourGame
 
-  def start_link do
+  def start_link() do
     GenServer.start_link(__MODULE__, %{}, [name: @registered_name])
+  end
+
+  def print_board() do
+    ConnectFour.Board.print()
   end
 end
