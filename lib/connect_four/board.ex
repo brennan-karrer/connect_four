@@ -22,13 +22,48 @@ defmodule ConnectFour.Board do
     if is_full?(column) do
       :column_full
     else
-      first_empty(column)
-      |> agent_name(column)
-      |> Process.whereis
-      |> Agent.update(fn _state -> player end)
-  
+      row = first_empty(column)
+      place_token(player, row, column)
+    end
+  end
+
+  def place_token(player, row, column) do
+    agent_name(row, column)
+    |> Process.whereis
+    |> Agent.update(fn _state -> player end)
+
+    if winner?(row, column) do
+      :winner
+    else
       :move_accepted
     end
+  end
+
+  def winner?(row, column) do
+    agent_name(row, column)
+    |> Process.whereis
+    |> Agent.get(&(&1))
+    |> column_winner?(row, column, 1)
+  end
+
+  def column_winner?(player, row, column, 4) do
+    true
+  end
+
+  def column_winner?(player, row, column, count) when row > 1 and row <= @last_row do
+    neighbor = agent_name(row - 1, column)
+    |> Process.whereis
+    |> Agent.get(&(&1))
+
+    if player == neighbor do
+      column_winner?(player, row - 1, column, count + 1)
+    else
+      false
+    end
+  end
+
+  def column_winner?(player, row, column, count) when row == 1 do
+    false
   end
 
   def is_full?(column) do
