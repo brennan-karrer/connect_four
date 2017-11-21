@@ -9,7 +9,8 @@ defmodule ConnectFour.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(ConnectFour.Game, [])
+      worker(ConnectFour.Game, []),
+      worker(ConnectFour.Board, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
